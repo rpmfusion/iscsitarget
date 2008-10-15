@@ -2,7 +2,7 @@
 
 Name:           iscsitarget
 Version:        0.4.15
-Release:        10.%{patchlevel}%{?dist}
+Release:        11.%{patchlevel}%{?dist}
 Epoch:          1
 Summary:        Utilities for iSCSI Enterprise Target 
 
@@ -15,6 +15,8 @@ Source0:        http://dl.sf.net/iscsitarget/%{name}-%{version}.tar.gz
 #       http://svn.berlios.de/svnroot/repos/iscsitarget/trunk/@142
 Patch0:         iscsitarget-0.4.15-%{patchlevel}.patch
 Patch1:         iscsitarget-0.4.15-initscript.patch
+# rename qelem to q_elem to avoid name clash with glibc qelem
+Patch2:         iscsitarget-0.4.15-qelem.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires:       %{name}-kmod >= %{epoch}:%{version}
@@ -36,10 +38,11 @@ of future storage needs.
 %setup -q
 %patch0 -p0 -b .%{patchlevel}
 %patch1 -p1 -b .initscript
+%patch2 -p1 -b .qelem
 
 
 %build
-make CFLAGS="%{optflags} -I../include" -C usr %{?_smp_flags}
+make CFLAGS="%{optflags} -I../include -D_GNU_SOURCE" -C usr %{?_smp_flags}
 
 
 %install
@@ -80,6 +83,9 @@ fi
 
 
 %changelog
+* Wed Oct 15 2008 Hans de Goede <j.w.r.degoede@hhs.nl> - 1:0.4.15-11.svn142
+- Fix building with latest glibc (needs _GNU_SOURCE to be defined)
+
 * Fri Oct 03 2008 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info - 1:0.4.15-10.svn142
 - rebuild for rpm fusion
 
