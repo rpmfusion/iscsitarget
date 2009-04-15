@@ -1,8 +1,6 @@
-%define patchlevel svn142
-
 Name:           iscsitarget
-Version:        0.4.15
-Release:        11.%{patchlevel}%{?dist}
+Version:        0.4.17
+Release:        3%{?dist}
 Epoch:          1
 Summary:        Utilities for iSCSI Enterprise Target 
 
@@ -10,13 +8,7 @@ Group:          System Environment/Daemons
 License:        GPLv2
 URL:            http://sourceforge.net/projects/iscsitarget/
 Source0:        http://dl.sf.net/iscsitarget/%{name}-%{version}.tar.gz
-# This was created with:
-# svn diff http://svn.berlios.de/svnroot/repos/iscsitarget/tags/0.4.15/ \
-#       http://svn.berlios.de/svnroot/repos/iscsitarget/trunk/@142
-Patch0:         iscsitarget-0.4.15-%{patchlevel}.patch
 Patch1:         iscsitarget-0.4.15-initscript.patch
-# rename qelem to q_elem to avoid name clash with glibc qelem
-Patch2:         iscsitarget-0.4.15-qelem.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires:       %{name}-kmod >= %{epoch}:%{version}
@@ -36,9 +28,7 @@ of future storage needs.
 
 %prep
 %setup -q
-%patch0 -p0 -b .%{patchlevel}
 %patch1 -p1 -b .initscript
-%patch2 -p1 -b .qelem
 
 
 %build
@@ -73,7 +63,7 @@ fi
 %doc COPYING README README.vmware ChangeLog
 %{_sbindir}/ietd
 %{_sbindir}/ietadm
-%config(noreplace) %{_sysconfdir}/ietd.conf
+%attr(600,root,root) %config(noreplace) %{_sysconfdir}/ietd.conf
 %config(noreplace) %{_sysconfdir}/initiators.allow
 %config(noreplace) %{_sysconfdir}/initiators.deny
 %{_initrddir}/iscsi-target
@@ -83,6 +73,17 @@ fi
 
 
 %changelog
+* Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 1:0.4.17-3
+- rebuild for new F11 features
+
+* Wed Feb 04 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 1:0.4.17-2
+- rebuild for new ssl
+
+* Mon Jan 05 2009 Lubomir Rintel <lkundrak@v3.sk> - 1:0.4.17-1
+- Latest upstream
+- Drop unneeded patches
+- Fix ietd.conf mode (#170)
+
 * Wed Oct 15 2008 Hans de Goede <j.w.r.degoede@hhs.nl> - 1:0.4.15-11.svn142
 - Fix building with latest glibc (needs _GNU_SOURCE to be defined)
 
