@@ -1,6 +1,6 @@
 Name:           iscsitarget
 Version:        0.4.17
-Release:        4%{?dist}
+Release:        5%{?dist}
 Epoch:          1
 Summary:        Utilities for iSCSI Enterprise Target 
 
@@ -73,6 +73,9 @@ fi
 
 
 %changelog
+* Sun Sep 13 2009 Hans de Goede <j.w.r.degoede@hhs.nl> - 1:0.4.17-5
+- silence crc32c_intel loading failure on amd machines
+
 * Sun Sep 13 2009 Hans de Goede <j.w.r.degoede@hhs.nl> - 1:0.4.17-4
 - rebuild for new ssl
 

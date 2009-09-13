@@ -1,6 +1,6 @@
-diff -ur iscsitarget-0.4.15.orig/etc/initd/initd.redhat iscsitarget-0.4.15/etc/initd/initd.redhat
---- iscsitarget-0.4.15.orig/etc/initd/initd.redhat	2008-01-25 19:54:08.000000000 +0100
-+++ iscsitarget-0.4.15/etc/initd/initd.redhat	2008-01-25 19:54:29.000000000 +0100
+diff -up iscsitarget-0.4.15/etc/initd/initd.redhat.initscript iscsitarget-0.4.15/etc/initd/initd.redhat
+--- iscsitarget-0.4.15/etc/initd/initd.redhat.initscript	2008-12-27 21:53:01.000000000 +0100
++++ iscsitarget-0.4.15/etc/initd/initd.redhat	2009-09-13 20:01:02.000000000 +0200
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/bin/bash
@@ -22,7 +22,15 @@ diff -ur iscsitarget-0.4.15.orig/etc/initd/initd.redhat iscsitarget-0.4.15/etc/i
  # Source function library.
  if [ -f /etc/init.d/functions ] ; then
    . /etc/init.d/functions
-@@ -26,6 +34,7 @@
+@@ -22,10 +30,14 @@ RETVAL=0
+ start()
+ {
+ 	echo -n "Starting iSCSI target service: "
+-	modprobe -q crc32c
++	# 2> /dev/null for kernels where regular crc32c is build in, as there
++	# modprobe will sometimes pick a CPU specific one which will then fail
++	# if not loaded on the right CPU, ie crc32c_intel on an amd64
++	modprobe crc32c 2> /dev/null
  	modprobe iscsi_trgt
  	daemon /usr/sbin/ietd
  	RETVAL=$?
@@ -30,7 +38,7 @@ diff -ur iscsitarget-0.4.15.orig/etc/initd/initd.redhat iscsitarget-0.4.15/etc/i
  	echo
  	return $RETVAL
  }
-@@ -40,6 +49,7 @@
+@@ -40,6 +52,7 @@ stop()
  	modprobe -r crc32c 2>/dev/null
  	if [ $RETVAL -eq 0 ]; then
  		echo_success
@@ -38,7 +46,7 @@ diff -ur iscsitarget-0.4.15.orig/etc/initd/initd.redhat iscsitarget-0.4.15/etc/i
  	else
  		echo_failure
  	fi
-@@ -61,6 +71,16 @@
+@@ -61,6 +74,16 @@ condrestart()
  	fi
  }
  
@@ -55,7 +63,7 @@ diff -ur iscsitarget-0.4.15.orig/etc/initd/initd.redhat iscsitarget-0.4.15/etc/i
  status()
  {
  	PID=`pidofproc ietd`
-@@ -89,7 +109,7 @@
+@@ -89,7 +112,7 @@ case "$1" in
          status
          ;;
    *)
