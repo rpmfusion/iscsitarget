@@ -1,6 +1,6 @@
 Name:           iscsitarget
 Version:        0.4.17
-Release:        3%{?dist}
+Release:        4%{?dist}
 Epoch:          1
 Summary:        Utilities for iSCSI Enterprise Target 
 
@@ -73,6 +73,9 @@ fi
 
 
 %changelog
+* Sun Sep 13 2009 Hans de Goede <j.w.r.degoede@hhs.nl> - 1:0.4.17-4
+- rebuild for new ssl
+
 * Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 1:0.4.17-3
 - rebuild for new F11 features
 
