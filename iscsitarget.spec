@@ -1,6 +1,6 @@
 Name:           iscsitarget
-Version:        0.4.17
-Release:        5%{?dist}
+Version:        1.4.18
+Release:        1%{?dist}
 Epoch:          1
 Summary:        Utilities for iSCSI Enterprise Target 
 
@@ -8,7 +8,7 @@ Group:          System Environment/Daemons
 License:        GPLv2
 URL:            http://sourceforge.net/projects/iscsitarget/
 Source0:        http://dl.sf.net/iscsitarget/%{name}-%{version}.tar.gz
-Patch1:         iscsitarget-0.4.15-initscript.patch
+Patch1:         iscsitarget-1.4.18-initscript.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires:       %{name}-kmod >= %{epoch}:%{version}
@@ -73,6 +73,9 @@ fi
 
 
 %changelog
+* Sun Nov 01 2009 Lubomir Rintel <lkundrak@v3.sk> - 1:1.4.18-1
+- Update to new upstream release
+
 * Sun Sep 13 2009 Hans de Goede <j.w.r.degoede@hhs.nl> - 1:0.4.17-5
 - silence crc32c_intel loading failure on amd machines
 

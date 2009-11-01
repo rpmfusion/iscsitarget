@@ -1,16 +1,17 @@
-diff -up iscsitarget-0.4.15/etc/initd/initd.redhat.initscript iscsitarget-0.4.15/etc/initd/initd.redhat
---- iscsitarget-0.4.15/etc/initd/initd.redhat.initscript	2008-12-27 21:53:01.000000000 +0100
-+++ iscsitarget-0.4.15/etc/initd/initd.redhat	2009-09-13 20:01:02.000000000 +0200
+diff -up iscsitarget-1.4.18/etc/initd/initd.redhat.initscript iscsitarget-1.4.18/etc/initd/initd.redhat
+--- iscsitarget-1.4.18/etc/initd/initd.redhat.initscript	2009-09-21 20:28:14.000000000 +0200
++++ iscsitarget-1.4.18/etc/initd/initd.redhat	2009-11-01 14:29:57.074823142 +0100
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/bin/bash
  #
  # chkconfig: - 39 35
  # description: Starts and stops the iSCSI target
-@@ -6,6 +6,14 @@
+@@ -6,7 +6,14 @@
  # pidfile: /var/run/ietd.pid
  # config:  /etc/ietd.conf
  
+-PATH=/sbin:/bin:/usr/sbin:/usr/bin
 +### BEGIN INIT INFO
 +# Provides: iscsi-target
 +# Required-Start: $local_fs $network $remote_fs $syslog
@@ -19,34 +20,35 @@ diff -up iscsitarget-0.4.15/etc/initd/initd.redhat.initscript iscsitarget-0.4.15
 +# Description: Starts and stops the iSCSI target
 +### END INIT INFO
 +
+ OPTIONS=""
+ 
  # Source function library.
- if [ -f /etc/init.d/functions ] ; then
-   . /etc/init.d/functions
-@@ -22,10 +30,14 @@ RETVAL=0
+@@ -27,11 +34,15 @@ RETVAL=0
  start()
  {
- 	echo -n "Starting iSCSI target service: "
+ 	echo -n "Starting iSCSI Target: "
 -	modprobe -q crc32c
 +	# 2> /dev/null for kernels where regular crc32c is build in, as there
 +	# modprobe will sometimes pick a CPU specific one which will then fail
 +	# if not loaded on the right CPU, ie crc32c_intel on an amd64
 +	modprobe crc32c 2> /dev/null
  	modprobe iscsi_trgt
- 	daemon /usr/sbin/ietd
+ 	daemon /usr/sbin/ietd $OPTIONS
  	RETVAL=$?
-+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/iscsi-target
- 	echo
- 	return $RETVAL
- }
-@@ -40,6 +52,7 @@ stop()
- 	modprobe -r crc32c 2>/dev/null
  	if [ $RETVAL -eq 0 ]; then
++		touch /var/lock/subsys/iscsi-target
  		echo_success
-+		rm -f /var/lock/subsys/iscsi-target
  	else
  		echo_failure
- 	fi
-@@ -61,6 +74,16 @@ condrestart()
+@@ -48,6 +59,7 @@ stop()
+ 	modprobe -r iscsi_trgt
+ 	RETVAL=$?
+ 	if [ $RETVAL -eq 0 ]; then
++		rm -f /var/lock/subsys/iscsi-target
+ 		echo_success
+ 	else
+ 		echo_failure
+@@ -71,6 +83,16 @@ condrestart()
  	fi
  }
  
@@ -63,12 +65,12 @@ diff -up iscsitarget-0.4.15/etc/initd/initd.redhat.initscript iscsitarget-0.4.15
  status()
  {
  	PID=`pidofproc ietd`
-@@ -89,7 +112,7 @@ case "$1" in
+@@ -99,7 +121,7 @@ case "$1" in
          status
          ;;
    *)
--        echo $"Usage: $0 {start|stop|restart|status}"
-+        echo $"Usage: $0 {start|stop|restart|try-restart|force-reload|status}"
+-        echo $"Usage: $0 {start|stop|restart|condrestart|status}"
++	echo $"Usage: $0 {start|stop|restart|try-restart|force-reload|status}"
          exit 1
  esac
  
