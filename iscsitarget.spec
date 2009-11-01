@@ -1,6 +1,6 @@
 Name:           iscsitarget
-Version:        0.4.17
-Release:        3%{?dist}
+Version:        1.4.18
+Release:        1%{?dist}
 Epoch:          1
 Summary:        Utilities for iSCSI Enterprise Target 
 
@@ -8,7 +8,7 @@ Group:          System Environment/Daemons
 License:        GPLv2
 URL:            http://sourceforge.net/projects/iscsitarget/
 Source0:        http://dl.sf.net/iscsitarget/%{name}-%{version}.tar.gz
-Patch1:         iscsitarget-0.4.15-initscript.patch
+Patch1:         iscsitarget-1.4.18-initscript.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires:       %{name}-kmod >= %{epoch}:%{version}
@@ -41,6 +41,10 @@ make DISTDIR=$RPM_BUILD_ROOT install-usr install-etc install-man
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/rc.d
 mv $RPM_BUILD_ROOT%{_sysconfdir}/init.d $RPM_BUILD_ROOT%{_sysconfdir}/rc.d
 
+# Use old config file location not to break existing installations
+mv $RPM_BUILD_ROOT%{_sysconfdir}/iet/* $RPM_BUILD_ROOT%{_sysconfdir}
+rmdir $RPM_BUILD_ROOT%{_sysconfdir}/iet
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -60,19 +64,28 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc COPYING README README.vmware ChangeLog
 %{_sbindir}/ietd
 %{_sbindir}/ietadm
 %attr(600,root,root) %config(noreplace) %{_sysconfdir}/ietd.conf
 %config(noreplace) %{_sysconfdir}/initiators.allow
-%config(noreplace) %{_sysconfdir}/initiators.deny
+%config(noreplace) %{_sysconfdir}/targets.allow
 %{_initrddir}/iscsi-target
 %{_mandir}/man5/ietd.conf.5*
 %{_mandir}/man8/ietadm.8*
 %{_mandir}/man8/ietd.8*
+%doc COPYING README README.vmware ChangeLog RELEASE_NOTES
 
 
 %changelog
+* Sun Nov 01 2009 Lubomir Rintel <lkundrak@v3.sk> - 1:1.4.18-1
+- Update to new upstream release
+
+* Sun Sep 13 2009 Hans de Goede <j.w.r.degoede@hhs.nl> - 1:0.4.17-5
+- silence crc32c_intel loading failure on amd machines
+
+* Sun Sep 13 2009 Hans de Goede <j.w.r.degoede@hhs.nl> - 1:0.4.17-4
+- rebuild for new ssl
+
 * Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 1:0.4.17-3
 - rebuild for new F11 features
 
