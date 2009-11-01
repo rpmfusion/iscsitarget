@@ -41,6 +41,10 @@ make DISTDIR=$RPM_BUILD_ROOT install-usr install-etc install-man
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/rc.d
 mv $RPM_BUILD_ROOT%{_sysconfdir}/init.d $RPM_BUILD_ROOT%{_sysconfdir}/rc.d
 
+# Use old config file location not to break existing installations
+mv $RPM_BUILD_ROOT%{_sysconfdir}/iet/* $RPM_BUILD_ROOT%{_sysconfdir}
+rmdir $RPM_BUILD_ROOT%{_sysconfdir}/iet
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -60,16 +64,16 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc COPYING README README.vmware ChangeLog
 %{_sbindir}/ietd
 %{_sbindir}/ietadm
 %attr(600,root,root) %config(noreplace) %{_sysconfdir}/ietd.conf
 %config(noreplace) %{_sysconfdir}/initiators.allow
-%config(noreplace) %{_sysconfdir}/initiators.deny
+%config(noreplace) %{_sysconfdir}/targets.allow
 %{_initrddir}/iscsi-target
 %{_mandir}/man5/ietd.conf.5*
 %{_mandir}/man8/ietadm.8*
 %{_mandir}/man8/ietd.8*
+%doc COPYING README README.vmware ChangeLog RELEASE_NOTES
 
 
 %changelog
